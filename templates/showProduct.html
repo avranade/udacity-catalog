@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<ol class="breadcrumb">
+   <li> <a href="/"><i class="fa fa-home fa-2x" aria-hidden="true"></i></a> </li>
+   <li> <a href="{{ url_for('default', category_id=category.id) }}">Categories</a> </li>
+   <li> <a href="{{ url_for('showCategory', category_id=category.id) }}">{{ category.name }}</a> </li>
+   <li class="active">{{ product.name }} </li>
+</ol>
+<div class="container-fluid">
+   <h4>Name : </h4>
+   <p>{{ product.name }}</p>
+   <h4>Description : </h4>
+   <p>{{ product.description }}</p>
+   <div class="form-buttons">
+      {% if 'username' in session and session['user_id'] == product.user_id %}
+      <!--  <button type="submit" class="btn btn-primary">OK</button> -->
+      <a href="{{ url_for('editProduct', product_id=product.id, category_id=category.id) }}"><button type="button" class="btn btn-primary">Edit</button></a>
+      <a href="{{ url_for('deleteProduct', product_id=product.id, category_id=category.id) }}"><button type="button" class="btn btn-danger">Delete</button></a>  
+      {% endif %}
+   </div>
+</div>
+{% endblock %}

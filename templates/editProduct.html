@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+<div class="display">
+<div class="col-md-8 col-md-offset-2">
+{% for category in categories %}
+{% if category.id == category_id %}
+<h4>Edit your Product of type '{{category.name}}'</h4>
+{% endif %}
+{% endfor %}
+<form action="#" method='post' enctype="multipart/form-data">
+   <label for="name">Name:</label>
+   <input type='text' class="form-control" name="name" id="name" placeholder='{{p.name}}'>
+   <label for="description">Description:</label>
+   <textarea class="form-control" name="description" id="description">{{ p.description }}</textarea>
+   <div class="form-buttons">
+      <button type="submit" class="btn btn-success">OK</button>
+      <a href="{{ url_for('showProduct', category_id=category_id, product_id=p.id) }}"><button type="button" class="btn btn-primary">Cancel</button></a>
+   </div>
+</form>
+{% endblock %}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <title>Product Catalog App</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet">
+      <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/6.0.0/normalize.css">
+      <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+      <script src="https://use.fontawesome.com/7b4ce702be.js"></script>
+   </head>
+   <body>
+      <div class="container">
+         <div class="row page-header">
+            <div class="col-md-4 col-sm-4 col-xs-4 text-left">
+               <div class="jsonendpoint">
+                  <a href="{{url_for('outputFullCatalogAsJson')}}"><button class="btn btn-info">Catalog as JSON</button></a>
+               </div>
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-4 text-left">
+               <h1>'Buy the Best' catalog builder</h1>
+               <div class="message">
+                  {% with messages = get_flashed_messages() %}
+                  {% if messages %}
+                  <ul>
+                     {% for message in messages %}
+                     <div class="flash">
+                        <li><strong> {{ message }} </strong></li>
+                     </div>
+                     {% endfor %}
+                  </ul>
+                  {% endif %}
+                  {% endwith %}  
+               </div>
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-4 text-right">
+               <div class="button-styles">
+                  {%if 'username' not in session %}
+                  <a href="{{url_for('showLogin')}}"><button class="btn btn-info">Login</button></a>
+                  {% else %}
+                  <a href="{{url_for('gdisconnect')}}"><button class="btn btn-primary">Logout</button></i></a>
+                  {% endif %}
+               </div>
+            </div>
+         </div>
+         {% block content %}
+         {% endblock %}
+      </div>
+   </body>
+</html>
