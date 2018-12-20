@@ -122,7 +122,7 @@ def gconnect():
     data = answer.json()
 
     login_session['provider'] = 'google'
-    login_session['username'] = data["name"]
+    login_session['username'] = data["email"]
     login_session['picture'] = data["picture"]
     login_session['email'] = data["email"]
 
@@ -164,18 +164,19 @@ def createUser(login_session):
 # Taken from ud330 and Oauth project (Udacity)
 def getUserInfo(user_id):
     """Returns the user_id from the session."""
-    user = session.query(User).filter_by(id=user_id).one()
-    return user.id
+    user = session.query(User).filter_by(id=user_id).one_or_none()
+    if user is not None:
+        return user.id
+    return None
 
 
 # Taken from ud330 and Oauth project (Udacity)
 def getUserID(email):
     """Filters the user by their e-mail."""
-    try:
-        user = session.query(User).filter_by(email=email).one()
+    user = session.query(User).filter_by(email=email).one_or_none()
+    if user is not None:
         return user.id
-    except RuntimeError:
-        return None
+    return None
 
 
 # Taken from ud330 and Oauth project (Udacity)
@@ -227,6 +228,7 @@ def login_mandatory(f):
 
 # JSON output of whole catalog
 @app.route('/catalog.json')
+@app.route('/api/catalog/JSON')
 def outputFullCatalogAsJson():
     """Makes an API endpoint for the database."""
     categories = session.query(Category).all()
@@ -236,6 +238,15 @@ def outputFullCatalogAsJson():
         products = session.query(Product).filter_by(category_id=c.id).all()
         catalog[-1]['Products'] = [p.serialize for p in products]
     return jsonify(Categories=catalog)
+
+
+# JSON to get product details
+@app.route('/category/<int:category_id>/<int:product_id>.json')
+@app.route('/api/catalog/<int:category_id>/<int:product_id>/JSON')
+def productJSON(category_id, product_id):
+    """Makes an API endpoint to get Product details, given category_id and product_id, similar to showProduct"""
+    product_info = session.query(Product).filter_by(id=product_id).one_or_none()
+    return jsonify(product_info=product_info.serialize)
 
 
 #
@@ -304,15 +315,13 @@ def newProduct(category_id):
            '<int:product_id>/edit/', methods=['GET', 'POST'])
 @login_mandatory
 def editProduct(category_id, product_id):
-    """Route for editig a Product."""
+    """Route for editing a Product."""
 
     editedProduct = session.query(Product).filter_by(id=product_id).one()
     creator = getUserInfo(editedProduct.user_id)
 
-    if editedProduct.user_id != creator:
-        return redirect(
-            'showProduct', category_id=category.id,
-            product_id=editedProduct.id)
+    if editedProduct.user_id != login_session['user_id']:
+        return render_template('error.html')
     if request.method == 'POST':
         if request.form['name']:
             editedProduct.name = request.form['name']
@@ -339,9 +348,8 @@ def deleteProduct(category_id, product_id):
     """Route for deleting a product."""
     productToDelete = session.query(Product).filter_by(id=product_id).one()
     creator = getUserInfo(productToDelete.user_id)
-    if productToDelete.user_id != creator:
-        return redirect('showProduct', category_id=category.id,
-                        product_id=productToDelete.id)
+    if productToDelete.user_id != login_session['user_id']:
+        return render_template('error.html')
     if request.method == 'POST':
         session.delete(productToDelete)
         session.commit()
