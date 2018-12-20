@@ -244,8 +244,9 @@ def outputFullCatalogAsJson():
 @app.route('/category/<int:category_id>/<int:product_id>.json')
 @app.route('/api/catalog/<int:category_id>/<int:product_id>/JSON')
 def productJSON(category_id, product_id):
-    """Makes an API endpoint to get Product details, given category_id and product_id, similar to showProduct"""
-    product_info = session.query(Product).filter_by(id=product_id).one_or_none()
+    """Makes an API endpoint to get Product details,
+    given category_id and product_id, similar to showProduct"""
+    product_info = session.query(Product).filter_by(id=product_id).one()
     return jsonify(product_info=product_info.serialize)
 
 
