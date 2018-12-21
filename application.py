@@ -246,7 +246,7 @@ def outputFullCatalogAsJson():
 def productJSON(category_id, product_id):
     """Makes an API endpoint to get Product details,
     given category_id and product_id, similar to showProduct"""
-    product_info = session.query(Product).filter_by(id=product_id).one()
+    product_info = session.query(Product).filter_by(id=product_id).one_or_none()
     return jsonify(product_info=product_info.serialize)
 
 
@@ -319,8 +319,6 @@ def editProduct(category_id, product_id):
     """Route for editing a Product."""
 
     editedProduct = session.query(Product).filter_by(id=product_id).one()
-    creator = getUserInfo(editedProduct.user_id)
-
     if editedProduct.user_id != login_session['user_id']:
         return render_template('error.html')
     if request.method == 'POST':
@@ -348,7 +346,6 @@ def editProduct(category_id, product_id):
 def deleteProduct(category_id, product_id):
     """Route for deleting a product."""
     productToDelete = session.query(Product).filter_by(id=product_id).one()
-    creator = getUserInfo(productToDelete.user_id)
     if productToDelete.user_id != login_session['user_id']:
         return render_template('error.html')
     if request.method == 'POST':

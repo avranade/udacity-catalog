@@ -17,7 +17,8 @@ Frontend: HTML, CSS, JS. Fontawesome was used for the Home Icon on Page.
 * Users do not have the capability to create categories, just Products. One category can have multiple products. 
 * Google sign in is used for Authentication. FB signin, while useful, hasn't been used here. 
 * Users can sign up using Google only. Once signed in, users can edit/delete only the content they created. 
-* A json endpoint at /catalog.json is kept open so that an API call can be made to it. 
+* A json endpoint at ```/catalog.json``` is kept open so that an API call can be made to it to get all catalog details.
+* A JSON endpoint at ```/category/<int:category_id>/<int:product_id>.json``` is kept open so that API calls can be made to get details of a particular item.
 
 ## Installation and How to View This App
 1. Install Vagrant and VirtualBox
